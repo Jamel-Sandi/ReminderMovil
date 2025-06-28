@@ -70,7 +70,7 @@ export async function GET() {
 async function sendEmailToElenita(reminder) {
   const nodemailer = require('nodemailer');
 
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'poyiyosgordos@gmail.com',

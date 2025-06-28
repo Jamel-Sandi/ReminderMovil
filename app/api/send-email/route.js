@@ -6,11 +6,11 @@ export async function POST(request) {
     const { to, reminder } = await request.json();
 
     // Configurar transporter con las credenciales - MÉTODO COMPATIBLE
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'poyiyosgordos@gmail.com',
-        pass: 'Poyiyos-21-03-24'
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
     });
 

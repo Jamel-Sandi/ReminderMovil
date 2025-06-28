@@ -1,15 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    // ⚠️ Ignorar errores de TypeScript durante el build
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true, // Temporal para desarrollo
   },
   eslint: {
-    // ⚠️ Ignorar errores de ESLint durante el build
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, // Temporal para desarrollo
   },
+  // Paquetes externos necesarios
+  serverExternalPackages: [
+    'mysql2',       // Para conexión directa con MySQL (si usas)
+    'nodemailer',   // Para envío de emails
+    'cron',         // Para tareas programadas
+    '@supabase/supabase-js' // Cliente de Supabase
+  ],
+  // Otras configuraciones recomendadas
   experimental: {
-    serverComponentsExternalPackages: ['mysql2', 'nodemailer']
+    serverActions: true // Si usas Server Actions
   }
 }
 
