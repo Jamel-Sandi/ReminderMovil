@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { reminderQueries, testConnection } from '../../../lib/mysql';
+import { reminderQueries, testConnection } from '../../../lib/supabase';
 
 // 📋 GET - Obtener todos los recordatorios
 export async function GET(request) {
@@ -7,10 +7,10 @@ export async function GET(request) {
     // Probar conexión primero
     const connectionOk = await testConnection();
     if (!connectionOk) {
-      // Fallback a localStorage si la BD no está disponible
+      // Fallback a localStorage si Supabase no está disponible
       return NextResponse.json({ 
         success: false, 
-        message: 'BD no disponible - usando localStorage',
+        message: 'Supabase no disponible - usando localStorage',
         useLocalStorage: true 
       });
     }
@@ -53,7 +53,7 @@ export async function POST(request) {
     if (!connectionOk) {
       return NextResponse.json({ 
         success: false, 
-        message: 'BD no disponible - usar localStorage',
+        message: 'Supabase no disponible - usar localStorage',
         useLocalStorage: true 
       });
     }
@@ -94,7 +94,7 @@ export async function PUT(request) {
     if (!connectionOk) {
       return NextResponse.json({ 
         success: false, 
-        message: 'BD no disponible - usar localStorage',
+        message: 'Supabase no disponible - usar localStorage',
         useLocalStorage: true 
       });
     }
@@ -142,7 +142,7 @@ export async function DELETE(request) {
     if (!connectionOk) {
       return NextResponse.json({ 
         success: false, 
-        message: 'BD no disponible - usar localStorage',
+        message: 'Supabase no disponible - usar localStorage',
         useLocalStorage: true 
       });
     }
