@@ -73,8 +73,8 @@ async function sendEmailToElenita(reminder) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'poyiyosgordos@gmail.com',
-      pass: 'Poyiyos-21-03-24'
+      user: process.env.EMAIL_USER, 
+      pass: process.env.EMAIL_PASS   
     }
   });
 
