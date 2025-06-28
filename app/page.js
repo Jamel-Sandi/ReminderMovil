@@ -29,23 +29,23 @@ export default function HomePage() {
     }
   };
 
-  // 📋 Cargar recordatorios (BD o localStorage)
+  // 📋 Cargar recordatorios desde Supabase
   const loadReminders = async () => {
     try {
       setLoading(true);
       
       if (useDatabase) {
-        // Intentar cargar desde la base de datos
+        // Intentar cargar desde Supabase
         const response = await fetch('/api/reminders');
         const result = await response.json();
         
         if (result.success) {
-          console.log('✅ Recordatorios cargados desde MySQL:', result.data.length);
+          console.log('✅ Recordatorios cargados desde Supabase:', result.data.length);
           setReminders(result.data);
           // Sincronizar con localStorage como backup
           localStorage.setItem('reminders', JSON.stringify(result.data));
         } else if (result.useLocalStorage) {
-          console.log('⚠️ MySQL no disponible, usando localStorage');
+          console.log('⚠️ Supabase no disponible, usando localStorage');
           setUseDatabase(false);
           loadFromLocalStorage();
         }
@@ -67,11 +67,11 @@ export default function HomePage() {
     setReminders(savedReminders ? JSON.parse(savedReminders) : []);
   };
 
-  // ➕ Agregar recordatorio
+  // ➕ Agregar recordatorio a Supabase
   const addReminder = async (newReminder) => {
     try {
       if (useDatabase) {
-        // Intentar guardar en BD
+        // Intentar guardar en Supabase
         const response = await fetch('/api/reminders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -81,14 +81,14 @@ export default function HomePage() {
         const result = await response.json();
         
         if (result.success) {
-          console.log('✅ Recordatorio guardado en MySQL');
+          console.log('✅ Recordatorio guardado en Supabase');
           setReminders(prev => [...prev, result.data]);
           // Backup en localStorage
           const updatedReminders = [...reminders, result.data];
           localStorage.setItem('reminders', JSON.stringify(updatedReminders));
           return;
         } else if (result.useLocalStorage) {
-          console.log('⚠️ MySQL no disponible, guardando en localStorage');
+          console.log('⚠️ Supabase no disponible, guardando en localStorage');
           setUseDatabase(false);
         }
       }
@@ -123,11 +123,11 @@ export default function HomePage() {
     }
   };
 
-  // 🗑️ Eliminar recordatorio
+  // 🗑️ Eliminar recordatorio de Supabase
   const deleteReminder = async (id) => {
     try {
       if (useDatabase) {
-        // Intentar eliminar de BD
+        // Intentar eliminar de Supabase
         const response = await fetch(`/api/reminders?id=${id}`, {
           method: 'DELETE'
         });
@@ -135,7 +135,7 @@ export default function HomePage() {
         const result = await response.json();
         
         if (result.success) {
-          console.log('✅ Recordatorio eliminado de MySQL');
+          console.log('✅ Recordatorio eliminado de Supabase');
         } else if (result.useLocalStorage) {
           setUseDatabase(false);
         }
@@ -205,7 +205,7 @@ export default function HomePage() {
     ));
   };
 
-  // Programar notificaciones del navegador (PARA TESTING: cada 2 minutos)
+  // Programar notificaciones del navegador
   useEffect(() => {
     reminders.forEach(reminder => {
       const reminderTime = new Date(reminder.datetime).getTime();
@@ -213,9 +213,6 @@ export default function HomePage() {
       
       if (reminderTime > now) {
         const timeUntilReminder = reminderTime - now;
-        
-        // PARA TESTING: También enviar cada 2 minutos si es dentro de 2 minutos
-        const twoMinutesFromNow = now + (2 * 60 * 1000); // 2 minutos en millisegundos
         
         setTimeout(() => {
           // Notificación del navegador
@@ -236,16 +233,6 @@ export default function HomePage() {
             scheduleNextRecurring(reminder);
           }
         }, timeUntilReminder);
-
-        // TESTING: Si el recordatorio es en los próximos 2 minutos, también programar para ahora + 2 min
-        if (reminderTime <= twoMinutesFromNow) {
-          setTimeout(() => {
-            console.log('🧪 TEST: Enviando email de prueba cada 2 minutos');
-            if (emailSettings.enabled) {
-              sendEmailNotification(reminder);
-            }
-          }, 2 * 60 * 1000); // 2 minutos
-        }
       }
     });
   }, [reminders]);
@@ -340,7 +327,7 @@ export default function HomePage() {
           <div style={styles.loadingSpinner}>🐝</div>
           <p style={styles.loadingText}>Cargando recordatorios de Elenita...</p>
           <p style={{...styles.loadingText, fontSize: '0.9rem', marginTop: '0.5rem'}}>
-            {useDatabase ? 'Conectando a la base de datos...' : 'Cargando desde localStorage...'}
+            {useDatabase ? 'Conectando a Supabase...' : 'Cargando desde localStorage...'}
           </p>
         </div>
       </div>
@@ -349,7 +336,7 @@ export default function HomePage() {
 
   return (
     <div style={styles.container}>
-      {/* Elementos decorativos flotantes - SOLO CORAZONES */}
+      {/* Elementos decorativos flotantes */}
       <div style={styles.floatingHearts}>
         <div style={{...styles.floatingHeart, top: '10%', left: '10%', animationDelay: '0s'}}>💖</div>
         <div style={{...styles.floatingHeart, top: '20%', right: '20%', animationDelay: '1s'}}>💕</div>
@@ -360,7 +347,7 @@ export default function HomePage() {
       </div>
 
       <div style={styles.content}>
-        {/* Header bonito - SIN ESTRELLAS NI INDICADOR MYSQL */}
+        {/* Header bonito */}
         <header style={styles.header}>
           <div style={styles.titleContainer}>
             <h1 style={styles.title}>
@@ -369,7 +356,10 @@ export default function HomePage() {
               <Heart className="heart-beat" style={{color: '#ff6b6b'}} />
             </h1>
           </div>
-          <p style={styles.subtitle}>Tu asistente personal 💖</p>
+          <p style={styles.subtitle}>
+            Tu asistente personal 💖 
+            {useDatabase && <span style={{color: '#10b981', marginLeft: '0.5rem'}}>🔗 Conectado a Supabase</span>}
+          </p>
         </header>
 
         <div style={styles.mainContent}>
